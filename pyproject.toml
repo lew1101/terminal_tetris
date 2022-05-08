@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "terminal-tetris"
+version = "0.1.0"
+description = "Tetris in the terminal made using the Python curses module."
+authors = ["lew1101 <kennethlew001@gmail.com>"]
+license = "MIT"
+readme="README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+
+[tool.poetry.dev-dependencies]
+
+[tool.poetry.scripts]
+tetris="terminal_tetris.__main__:run"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
