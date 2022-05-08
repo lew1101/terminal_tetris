@@ -45,7 +45,7 @@ def main(stdscr: 'curses._CursesWindow', argv: 'argparse.Namespace'):
     except:
         pass
 
-    debug = argv.debug
+    debug = argv.debug or __debug__
 
     game_win = stdscr.subwin(GAME_DISPLAY_ROWS, GAME_DISPLAY_COLS, 2, 4)
     next_tetromino_win = stdscr.subwin(8, 14, 2, GAME_DISPLAY_COLS + 8)
@@ -69,8 +69,9 @@ def main(stdscr: 'curses._CursesWindow', argv: 'argparse.Namespace'):
             # ----------------
             if not paused:
                 is_game_tick = clock.interval_has_passed(GAME_TICK_RATE)
-                if is_game_tick:
-                    game.tick()
+
+            if is_game_tick:
+                game.tick()
 
             # ----------------
             # INPUT
@@ -145,9 +146,10 @@ def main(stdscr: 'curses._CursesWindow', argv: 'argparse.Namespace'):
                                 GAME_END=bool(game.flags & Tetris.Flags.GAME_END))
                 last_key = key
 
-            game_win.refresh()
-            next_tetromino_win.refresh()
-            score_win.refresh()
+            if is_game_tick:
+                game_win.refresh()
+                next_tetromino_win.refresh()
+                score_win.refresh()
             stdscr.refresh()
 
             clock.tick()

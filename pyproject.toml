@@ -12,7 +12,7 @@ python = "^3.9"
 [tool.poetry.dev-dependencies]
 
 [tool.poetry.scripts]
-tetris="terminal_tetris.__main__:run"
+tetris="terminal-tetris.__main__:run"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
