@@ -59,6 +59,8 @@ class Tetromino:
 
 
 class Tetris:
+    class Flags:
+        GAME_END = 1
 
     def __init__(self, rows=TETRIS_ROWS, cols=TETRIS_COLS):
         self.rows = rows
@@ -67,7 +69,7 @@ class Tetris:
         self.flags = 0
         self.score = 0
 
-        self.curr_tetromino = Tetromino.get_random_tetromino(
+        self.active_tetromino = Tetromino.get_random_tetromino(
             x=TETROMINO_SPAWN_X, y=TETROMINO_SPAWN_Y)
         self.next_tetromino = Tetromino.get_random_tetromino(
             x=TETROMINO_SPAWN_X, y=TETROMINO_SPAWN_Y)
@@ -93,27 +95,27 @@ class Tetris:
                 return True
         return False
 
-    def move_curr_tetromino(self, dy: int, dx: int) -> 0 | -1:
-        self.curr_tetromino.y += dy
-        self.curr_tetromino.x += dx
-        if self.tetromino_exceeds_walls(self.curr_tetromino) or \
-                self.tetromino_intersects_placed(self.curr_tetromino):
+    def move_active_tetromino(self, dy: int, dx: int) -> 0 | -1:
+        self.active_tetromino.y += dy
+        self.active_tetromino.x += dx
+        if self.tetromino_exceeds_walls(self.active_tetromino) or \
+                self.tetromino_intersects_placed(self.active_tetromino):
             # undo
-            self.curr_tetromino.y -= dy
-            self.curr_tetromino.x -= dx
+            self.active_tetromino.y -= dy
+            self.active_tetromino.x -= dx
             return -1
         return 0
 
-    def rotate_curr_tetromino(self) -> 0 | -1:
-        old_rot = self.curr_tetromino.rot_index
+    def rotate_active_tetromino(self) -> 0 | -1:
+        old_rot = self.active_tetromino.rot_index
         for dx in (0, 1, -1):  # normal, *wall_kicks
-            self.curr_tetromino.x += dx
-            self.curr_tetromino.rotate()
-            if self.tetromino_exceeds_walls(self.curr_tetromino) or \
-                    self.tetromino_intersects_placed(self.curr_tetromino):
+            self.active_tetromino.x += dx
+            self.active_tetromino.rotate()
+            if self.tetromino_exceeds_walls(self.active_tetromino) or \
+                    self.tetromino_intersects_placed(self.active_tetromino):
                 # undo
-                self.curr_tetromino.x -= dx
-                self.curr_tetromino.rot_index = old_rot
+                self.active_tetromino.x -= dx
+                self.active_tetromino.rot_index = old_rot
             else:
                 return 0  # success
         return -1  # fail
@@ -132,22 +134,19 @@ class Tetris:
         if self.flags & Tetris.Flags.GAME_END:
             return -1
 
-        if self.move_curr_tetromino(1, 0) == -1:
-            if self.tetromino_exceeds_roof(self.curr_tetromino):
+        if self.move_active_tetromino(1, 0) == -1:
+            if self.tetromino_exceeds_roof(self.active_tetromino):
                 # tetromino out of bounds
                 self.flags |= Tetris.Flags.GAME_END
                 return -1
 
-            for x, y in self.curr_tetromino.get_squares():
-                self.field[y][x] = self.curr_tetromino.val
+            for x, y in self.active_tetromino.get_squares():
+                self.field[y][x] = self.active_tetromino.val
 
-            self.curr_tetromino = self.next_tetromino
+            self.active_tetromino = self.next_tetromino
             self.next_tetromino = Tetromino.get_random_tetromino(
                 x=TETROMINO_SPAWN_X, y=TETROMINO_SPAWN_Y)
 
             self.clear_lines()
 
         return 0
-
-    class Flags:
-        GAME_END = 1

@@ -1,9 +1,5 @@
-import curses
+from time import sleep, perf_counter
 
-from time import perf_counter
-from dataclasses import dataclass
-
-FPS_UPDATE_INTERVAL = 25
 SMOOTHING_FACTOR = 0.9
 
 
@@ -17,15 +13,12 @@ def calc_smooth_fps(frames: int, time_diff: float, avg_fps: float, smoothing_fac
     return avg_fps
 
 
-@dataclass
 class Clock:
-    target_fps: int
+    def __init__(self, target_fps: int):
+        self.target_fps = target_fps
 
-    def __post_init__(self):
-        self.start = perf_counter()
-        self.elapsed = 0
-        self.prev_tick = -1.0
         self.delay = 1/self.target_fps
+        self.prev_tick = perf_counter()
         self.frames = 0
 
     def tick(self) -> float:
@@ -33,13 +26,12 @@ class Clock:
         elapsed = curr_tick - self.prev_tick
 
         if (sleep_time := self.delay - elapsed) > 0:
-            curses.napms(int(sleep_time*1000))
+            sleep(sleep_time)
 
         self.prev_tick = curr_tick
         self.frames += 1
-        self.elapsed = curr_tick - self.start
 
         return elapsed
 
-    def interval_has_passed(self, interval: int) -> bool:
-        return self.frames % interval == 0 and self.frames != 0
+    def frame_interval_has_passed(self, frames: int) -> bool:
+        return self.frames % frames == 0 and self.frames != 0
