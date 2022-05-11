@@ -127,8 +127,7 @@ def main(stdscr: 'curses._CursesWindow', argv: 'argparse.Namespace'):
 
                 draw_debug_info(stdscr,
                                 FPS=round(avg_fps, 2),
-                                PAUSED=paused,
-                                DEBUG=(argv.debug))
+                                PAUSED=paused)
 
             game_win.refresh()
             next_tetromino_win.refresh()
