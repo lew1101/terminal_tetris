@@ -2,7 +2,7 @@ import curses
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .game import Tetris
+    from .tetris import Tetris
 
 
 def draw_debug_info(stdscr: 'curses._CursesWindow', /, **info):
@@ -12,7 +12,7 @@ def draw_debug_info(stdscr: 'curses._CursesWindow', /, **info):
 
 
 def _draw_cell(win: 'curses._CursesWindow', y: int, x: int, color: int):
-    win.addstr(y, x, '█'*2,
+    win.addstr(y, x, '  ',
                curses.color_pair(color))
 
 
